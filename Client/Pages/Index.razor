@@ -3,7 +3,7 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Hello, testworld!</h1>
 
 Welcome to your new app.
 @foreach (var pizza in State.Menu.Pizzas)
@@ -15,18 +15,62 @@ Welcome to your new app.
         <div class="col"><button class="btn btn-success pl-4 pr-4" @onclick="@(() => AddToBasket(pizza))">Add</button></div>
     </div>
 }
+<!-- Shopping Basket-->
+@if (State.Basket.Orders.Any())
+{
+    <h1> Your current Order</h1>
+    @foreach (var (pizza,pos) in State.Basket.Orders.Select((id,pos) => (State.Menu.GetPizza(id),pos)))
+    {
+        <div class="row mb-2">
+            <div class="col">@pizza.Name</div>
+            <div class="col">@pizza.Price</div>
+            <div class="col">@pizza.Spiciness</div>
+            <div class="col"><button class="btn btn-danger" @onclick="@(()=> RemoveFromBasket(pos))">Remove </button></div>
+        </div>
+    }
+}
+
+<div>Total Price: @State.TotalPrice</div>
+
+<h1>Please enter your details below</h1>
+
+<fieldset>
+    <div class="row mb-2">
+        <label class="col-2" for="name">Name:</label>
+        <input class="col-6" id="name" @bind="State.Basket.Customer.Name" />
+    </div>
+    <div class="row mb-2">
+        <label class="col-2" for="street">Street:</label>
+        <input class="col-6" id="street" @bind="State.Basket.Customer.Street" />
+    </div>
+    <button @onclick="PlaceOrder">Checkout</button>
+
+</fieldset>
+
+@State.ToJson()
+
 
 @code{
     private State State{get;}= new State();
     protected override void OnInitialized()
     {
-     State.Menu.Add(new Pizza(1,"Pepperoni",123m, Spiciness.Spicy));
-     State.Menu.Add(new Pizza(2,"Salami",123m, Spiciness.Spicy));
-     State.Menu.Add(new Pizza(3,"Diabolo",123m, Spiciness.Hot));
+        State.Menu.Add(new Pizza(1,"Pepperoni",123m, Spiciness.Spicy));
+        State.Menu.Add(new Pizza(2,"Salami",123m, Spiciness.Spicy));
+        State.Menu.Add(new Pizza(3,"Diabolo",123m, Spiciness.Hot));
     }
 
     private void AddToBasket(Pizza pizza)
     {
-        State.ShoppingBasket.Add(pizza.Id);
+        State.Basket.Add(pizza.Id);
+    }
+
+    private void RemoveFromBasket(int pizzaid)
+    {
+        State.Basket.Remove(pizzaid);
+    }
+
+    private void PlaceOrder()
+    {
+        Console.WriteLine("Placing Order");
     }
 }

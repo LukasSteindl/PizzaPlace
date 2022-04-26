@@ -10,5 +10,10 @@ public class ShoppingBasket {
     {
         Orders.Add(pizzaId);
     }
-}
+
+    public void Remove(int pizzaId)
+    {
+        Orders.RemoveAt(pizzaId);
+    }
+    }
 }
